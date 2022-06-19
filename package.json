@@ -1,0 +1,12 @@
+{
+
+  "dependencies": {
+    "aws-sdk": "^2.1157.0",
+    "app-root-path": "^3.0.0",
+    "serverless-jest-plugin": "^0.4.0",
+    "yaml": "^2.1.1"
+  },
+  "scripts": {
+    "test": "jest --env=node"
+  }
+}
