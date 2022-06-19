@@ -4,6 +4,24 @@ const fs = require('fs')
 const AWS = require('aws-sdk');
 var appRoot = require('app-root-path');
 const jestPlugin = require('serverless-jest-plugin');
+expect.extend({
+    myToBe(response, value) {
+        const pass = response.statusCode == value;
+        if (pass) {
+            return {
+                message: () =>
+                    `expected ${response.statusCode} =  ${value}`,
+                pass: true,
+            };
+        } else {
+            return {
+                message: () =>
+                    `expected:${response.statusCode},received: ${value}, message:${(response.body)} `,
+                pass: false,
+            };
+        }
+    },
+});
 function test() {
     var test_config = fs.readFileSync('test_config.yml', 'utf8')
     const testDirection = YAML.parse(test_config);
@@ -27,7 +45,7 @@ function test() {
         it(item.uri + ((item.description) ? " " + item.description : ""), async () => {
             return wrapped.run(input).then(async (response) => {
                 console.log("\u001b[1;35m " + item.uri + ": result:" + JSON.stringify(response) + "\u001b[1;0m")
-                console.log(response);
+
                 try {
                     await expect(response).myToBe(200);
                 }
