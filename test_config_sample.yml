@@ -1,0 +1,19 @@
+aws_profile: admin_rubywave_lecture_sandbox
+app: demo-lambda-test
+region: ap-northeast-2
+env:
+- key: test_value
+  value: my_test
+test_targets:
+- uri: ddb/put.js
+  description: testDDB
+  method: put
+  parms:
+    email: spark@rubywave.io
+    company_name: rubywave
+    type: test
+- uri: ddb/get.js
+  description: testDDB
+  method: get
+  parms:
+    hash_key: hash_test
