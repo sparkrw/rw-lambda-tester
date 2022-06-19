@@ -22,8 +22,8 @@ expect.extend({
         }
     },
 });
-function test() {
-    var test_config = fs.readFileSync('test_config.yml', 'utf8')
+function test(configFilePath = 'test_config.yml', lambdaPath = "/src/lambda/") {
+    var test_config = fs.readFileSync(configFilePath, 'utf8')
     const testDirection = YAML.parse(test_config);
     //기본 설정
     //aws profile
@@ -38,14 +38,12 @@ function test() {
         //method에 따른 input 설정
         //queryStringParameters,body에 둘다 넣는다. 
         let input = { queryStringParameters: item.parms, body: JSON.stringify(item.parms) };
-
-        const mod = require(appRoot + "/src/lambda/" + item.uri);
+        const mod = require(appRoot + lambdaPath + item.uri);
         const lambdaWrapper = jestPlugin.lambdaWrapper;
         const wrapped = lambdaWrapper.wrap(mod, { handler: 'handler' });
         it(item.uri + ((item.description) ? " " + item.description : ""), async () => {
             return wrapped.run(input).then(async (response) => {
                 console.log("\u001b[1;35m " + item.uri + ": result:" + JSON.stringify(response) + "\u001b[1;0m")
-
                 try {
                     await expect(response).myToBe(200);
                 }
