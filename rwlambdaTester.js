@@ -29,6 +29,7 @@ function test(configFilePath = 'test_config.yml', lambdaPath = "/src/lambda/") {
     //aws profile
     var credentials = new AWS.SharedIniFileCredentials({ profile: testDirection.aws_profile });
     AWS.config.credentials = credentials;
+    process.env.region = testDirection.region;
     AWS.config.update({ region: testDirection.region });
     //환경 변수 설정
     testDirection.env.forEach((item, index) => {
