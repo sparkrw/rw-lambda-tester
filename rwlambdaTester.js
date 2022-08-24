@@ -26,9 +26,25 @@ function test(configFilePath = 'test_config.yml', lambdaPath = "/src/lambda/") {
     var test_config = fs.readFileSync(configFilePath, 'utf8')
     const testDirection = YAML.parse(test_config);
     //기본 설정
-    //aws profile
-    var credentials = new AWS.SharedIniFileCredentials({ profile: testDirection.aws_profile });
-    AWS.config.credentials = credentials;
+
+    if (testDirection.mode == "role") {
+        const sts = new AWS.STS();
+        const timestamp = (new Date()).getTime();
+        const params = {
+            RoleArn: testDirection.roleArn, RoleSessionName: `rw-lambda-tester-${timestamp}`
+        };
+        const data = await sts.assumeRole(params).promise();
+        AWS.config.update({
+            accessKeyId: data.Credentials.AccessKeyId,
+            secretAccessKey: data.Credentials.SecretAccessKey,
+            sessionToken: data.Credentials.SessionToken,
+        });
+    }
+    else {
+        //aws profile
+        var credentials = new AWS.SharedIniFileCredentials({ profile: testDirection.aws_profile });
+        AWS.config.credentials = credentials;
+    }
     process.env.region = testDirection.region;
     AWS.config.update({ region: testDirection.region });
     //환경 변수 설정
