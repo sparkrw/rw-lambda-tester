@@ -3,8 +3,8 @@ app: demo-lambda-test
 region: ap-northeast-2
 # roleArn: arn:aws:iam::12345678910:role/demo-iam-role
 env:
-- key: test_value
-  value: my_test
+  test_value: my_test
+
 test_targets:
 - uri: ddb/put.js
   description: testDDB
