@@ -4,7 +4,7 @@ const fs = require('fs')
 const AWS = require('aws-sdk');
 var appRoot = require('app-root-path');
 const jestPlugin = require('serverless-jest-plugin');
-const { fail } = require('assert');
+
 const JSON5 = require('json5');
 const moment = require('moment');
 const excuted_timestamp = moment().valueOf();
@@ -87,7 +87,7 @@ expect.extend({
         } else {
             return {
                 message: () =>
-                    `expected:${response.statusCode},received: ${value}, message:${(response.body)} `,
+                    `expected:${response.statusCode},received: ${value}, response:${(response.body)} `,
                 pass: false,
             };
         }
@@ -156,20 +156,20 @@ function test(configFilePath = 'test_config.yml', lambdaPath = "/src/lambda/") {
             return wrapped.run(input).then(async (response) => {
                 console.log("\u001b[1;35m " + item.uri + ": result:" + JSON.stringify(response) + "\u001b[1;0m")
                 try {
-                    if (item.assert != undefined) {
+                    if (item.expect != undefined) {
                         if (eventType == "http") {
 
-                            if (item.assert.checkType == "check_200") {
-                                if (item.assert.not) {
+                            if (item.expect.checkType == "check_200") {
+                                if (item.expect.not) {
                                     await expect(response).not.myToBe(200);
                                 }
                                 else {
                                     await expect(response).myToBe(200);
                                 }
                             }
-                            else if (item.assert.checkType == "check_value") {
+                            else if (item.expect.checkType == "check_value") {
                                 let responseObject = JSON5.parse(response.body)
-                                await expect(responseObject).iterateExpect(getValue(item.assert.target));
+                                await expect(responseObject).iterateExpect(getValue(item.expect.target));
                             }
                         }
                     }

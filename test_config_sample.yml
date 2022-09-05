@@ -14,7 +14,7 @@ test_targets:
     email: spark@rubywave.io
     company_name: rubywave
     type: test
-  assert:
+  expect:
     checkType: check_200
 - uri: ddb/get.js
   description: testDDB
@@ -22,7 +22,7 @@ test_targets:
   method: get
   parms:
     hash_key: hash_test
-  assert:
+  expect:
     checkType: check_value
     target:
       data:
