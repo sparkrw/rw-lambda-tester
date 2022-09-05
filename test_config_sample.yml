@@ -7,14 +7,24 @@ env:
   value: my_test
 test_targets:
 - uri: ddb/put.js
+  eventType: http
   description: testDDB
   method: put
   parms:
     email: spark@rubywave.io
     company_name: rubywave
     type: test
+  assert:
+    checkType: check_200
 - uri: ddb/get.js
   description: testDDB
+  eventType: http
   method: get
   parms:
     hash_key: hash_test
+  assert:
+    checkType: check_value
+    target:
+      data:
+        t1: 1
+        t2: 2
