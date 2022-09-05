@@ -5,6 +5,7 @@ const AWS = require('aws-sdk');
 var appRoot = require('app-root-path');
 const jestPlugin = require('serverless-jest-plugin');
 const { fail } = require('assert');
+<<<<<<< HEAD
 const JSON5 = require('json5');
 const moment = require('moment');
 const excuted_timestamp = moment().valueOf();
@@ -75,6 +76,9 @@ function _iterateExpect(response, value, path = "") {
 
     }
 }
+=======
+const { isArray } = require('util');
+>>>>>>> 03bdcab3b2d258de38384d7ff01eb1789a4bb5b3
 expect.extend({
     myToBe(response, value) {
         const pass = response.statusCode == value;
@@ -128,11 +132,21 @@ function test(configFilePath = 'test_config.yml', lambdaPath = "/src/lambda/") {
             process.env.region = testDirection.region;
             AWS.config.update({ region: testDirection.region });
             //환경 변수 설정
-            testDirection.env.forEach((item, index) => {
-                process.env[item.key] = item.value;
-            });
+            if(Array.isArray(testDirection.env))
+            {
+                testDirection.env.forEach((item, index) => {
+                    process.env[item.key] = item.value;
+                });
+            }
+            else
+            {
+                for(var props in testDirection.env )
+                {
+                  process.env[props] =testDirection.env[props];
+                }
+            }
         } catch (e) {
-
+            console.log(e);
             process.exit("could not assume the role:" + testDirection.roleArn)
         }
     });
