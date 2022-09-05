@@ -169,7 +169,12 @@ function test(configFilePath = 'test_config.yml', lambdaPath = "/src/lambda/") {
                             }
                             else if (item.expect.checkType == "check_value") {
                                 let responseObject = JSON5.parse(response.body)
-                                await expect(responseObject).iterateExpect(getValue(item.expect.target));
+                                if (item.expect.not) {
+                                    await expect(responseObject).not.iterateExpect(getValue(item.expect.target));
+                                }
+                                else {
+                                    await expect(responseObject).iterateExpect(getValue(item.expect.target));
+                                }
                             }
                         }
                     }
