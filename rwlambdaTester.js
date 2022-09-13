@@ -196,7 +196,7 @@ function test(configFilePath = 'test_config.yml', lambdaPath = "/src/lambda/") {
                 {
                     authorizer: {
                         jwt: {
-                            claims: testDirection.claimsProfiles[item.claimsProfile]
+                            claims: testDirection.claimsProfiles ? testDirection.claimsProfiles[item.claimsProfile] : undefined
                         }
                     }
                 }
