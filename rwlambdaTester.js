@@ -259,9 +259,7 @@ function test(configFilePath = 'test_config.yml', lambdaPath = "/src/lambda/") {
                         }
 
                     }
-                    else {
-                        await expect(response).myToBe(200);
-                    }
+
                     let responseObject = JSON5.parse(response.body)
                     checkSaveValue(item, responseObject)
                 }
