@@ -4,7 +4,10 @@ region: ap-northeast-2
 # roleArn: arn:aws:iam::12345678910:role/demo-iam-role
 env:
   test_value: my_test
-
+claimsProfiles:
+  test1:
+    test1: tt1
+    test2: tt2
 test_targets:
 - uri: ddb/put.js
   eventType: http
@@ -20,6 +23,7 @@ test_targets:
   description: testDDB
   eventType: http
   method: get
+  claimsProfile: test1
   parms:
     hash_key: hash_test
   expect:

@@ -1,4 +1,4 @@
-
+'use strict';
 const YAML = require('yaml')
 const fs = require('fs')
 const AWS = require('aws-sdk');
@@ -12,7 +12,41 @@ const excuted_timestamp = moment().valueOf();
 function isPrimitive(test) {
     return test !== Object(test);
 }
+let saveValue = new Object();
+function checkSaveValue(item, responseObject) {
 
+    if (item.saveValue) {
+        item.saveValue.forEach((keyObject, index) => {
+            let ar = keyObject.path.split(".");
+            let obj = responseObject
+            for (let i = 0; i < ar.length; i++) {
+                if (obj != undefined) {
+                    obj = obj[ar[i]];
+                }
+            }
+
+            saveValue[keyObject.saveas] = obj
+        })
+    }
+
+}
+function iterate(obj) {
+    if (!(obj instanceof Object)) {
+        return getValue(obj);
+    }
+    for (var property in obj) {
+
+        if (obj.hasOwnProperty(property)) {
+            if (typeof obj[property] == "object") {
+                obj[property] = iterate(obj[property]);
+            } else {
+                let val = obj[property];
+                obj[property] = getValue(val);
+            }
+        }
+    }
+    return obj;
+}
 function getValue(subject) {
     if (typeof subject != "string") {
         return subject;
@@ -75,6 +109,7 @@ function _iterateExpect(response, value, path = "") {
 
     }
 }
+
 expect.extend({
     myToBe(response, value) {
         const pass = response.statusCode == value;
@@ -148,11 +183,56 @@ function test(configFilePath = 'test_config.yml', lambdaPath = "/src/lambda/") {
         //method에 따른 input 설정
         //queryStringParameters,body에 둘다 넣는다. 
         let eventType = item.eventType ? item.eventType : "http";
-        let input = { queryStringParameters: item.parms, body: JSON.stringify(item.parms) };
+
+
+
         const mod = require(appRoot + lambdaPath + item.uri);
         const lambdaWrapper = jestPlugin.lambdaWrapper;
         const wrapped = lambdaWrapper.wrap(mod, { handler: 'handler' });
         it(item.uri + ((item.description) ? " " + item.description : ""), async () => {
+            let input = {
+                queryStringParameters: item.parms, body: JSON.stringify(item.parms),
+                requestContext:
+                {
+                    authorizer: {
+                        jwt: {
+                            claims: testDirection.claimsProfiles ? testDirection.claimsProfiles[item.claimsProfile] : undefined
+                        }
+                    }
+                }
+            }
+
+
+            if (item.parms) {
+                if (typeof item.parms == 'string') {
+                    input.queryStringParameters = item.parms
+
+                } else {
+                    for (var propert in item.parms) {
+                        let customObject = item.parms[propert];
+                        let val = "";
+                        let key = "";
+
+
+                        val = iterate(customObject)
+
+                        if (input.body) {
+                            let inputObject = JSON5.parse(input.body);
+
+                            inputObject[propert] = val;
+
+                            input.body = JSON.stringify(inputObject);
+                        }
+                        if (input.queryStringParameters) {
+                            input.queryStringParameters[propert] = val;
+                        }
+
+                    }
+                }
+            }
+
+
+
             return wrapped.run(input).then(async (response) => {
                 console.log("\u001b[1;35m " + item.uri + ": result:" + JSON.stringify(response) + "\u001b[1;0m")
                 try {
@@ -177,10 +257,13 @@ function test(configFilePath = 'test_config.yml', lambdaPath = "/src/lambda/") {
                                 }
                             }
                         }
+
                     }
                     else {
                         await expect(response).myToBe(200);
                     }
+                    let responseObject = JSON5.parse(response.body)
+                    checkSaveValue(item, responseObject)
                 }
                 catch (e) {
                     throw e;  // <= set your breakpoint here
