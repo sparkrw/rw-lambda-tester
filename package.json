@@ -2,7 +2,7 @@
   "name": "rw-lambda-tester",
   "dependencies": {
     "app-root-path": "^3.0.0",
-    "aws-sdk": "^2.1157.0",
+
     "json5": "^2.2.1",
     "serverless-jest-plugin": "^0.4.0",
     "yaml": "^2.1.1"
@@ -11,7 +11,7 @@
     "type": "git",
     "url": "https://github.com/sparkrw/rw-lambda-tester.git"
   },
-  "version": "1.0.19",
+  "version": "1.0.20",
   "description": "Helper to test lambda",
   "main": "rwlambdaTester.js",
   "license": "MIT",
