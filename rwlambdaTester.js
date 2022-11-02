@@ -134,6 +134,7 @@ expect.extend({
 });
 
 function test(configFilePath = 'test_config.yml', lambdaPath = "/src/lambda/") {
+    process.env.testing = true;
     var test_config = fs.readFileSync(configFilePath, 'utf8')
     const testDirection = YAML.parse(test_config);
     beforeAll(async () => {
@@ -183,9 +184,6 @@ function test(configFilePath = 'test_config.yml', lambdaPath = "/src/lambda/") {
         //method에 따른 input 설정
         //queryStringParameters,body에 둘다 넣는다. 
         let eventType = item.eventType ? item.eventType : "http";
-
-
-
         const mod = require(appRoot + lambdaPath + item.uri);
         const lambdaWrapper = jestPlugin.lambdaWrapper;
         const wrapped = lambdaWrapper.wrap(mod, { handler: 'handler' });
