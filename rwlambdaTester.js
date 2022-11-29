@@ -113,7 +113,6 @@ function _iterateExpect(response, value, path = "") {
 async function handleAuthorizer(authorizer,token) {
     const authorizerEvent = { headers: {authorization: `Bearer ${token}`}}
     const result = (await authorizer.handler(authorizerEvent)).context
-    console.log(result)
     return result
 }
 
