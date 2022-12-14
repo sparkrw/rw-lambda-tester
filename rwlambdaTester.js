@@ -196,7 +196,7 @@ function test(configFilePath = 'test_config.yml', lambdaPath = "/src/lambda/") {
         const lambdaWrapper = jestPlugin.lambdaWrapper;
         const wrapped = lambdaWrapper.wrap(mod, { handler: 'handler' });
         
-        const useAuthorizer = require(appRoot+lambdaPath+item.uri).apiSpec.event[0].authorizer? true : false
+        const useAuthorizer = (mod.apiSpec.event&& mod.apiSpec.event[0]&& mod.apiSpec.event[0].authorizer)
 
         it(item.uri + ((item.description) ? " " + item.description : ""), async () => {
             let authorizer_result = testDirection.claimsProfiles ? testDirection.claimsProfiles[item.claimsProfile] : undefined
