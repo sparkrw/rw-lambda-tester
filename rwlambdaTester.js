@@ -110,8 +110,8 @@ function _iterateExpect(response, value, path = "") {
     }
 }
 
-async function handleAuthorizer(authorizer,token) {
-    const authorizerEvent = { headers: {authorization: `Bearer ${token}`}}
+async function handleAuthorizer(authorizer, token) {
+    const authorizerEvent = { headers: { authorization: `Bearer ${token}` } }
     const result = (await authorizer.handler(authorizerEvent)).context
     return result
 }
@@ -144,7 +144,7 @@ function test(configFilePath = 'test_config.yml', lambdaPath = "/src/lambda/") {
     var test_config = fs.readFileSync(configFilePath, 'utf8')
     const testDirection = YAML.parse(test_config);
     // authorizer 설정
-    const authorizer =  testDirection.authorizer? require(appRoot +lambdaPath + testDirection.authorizer) : null
+    const authorizer = testDirection.authorizer ? require(appRoot + lambdaPath + testDirection.authorizer) : null
     beforeAll(async () => {
         //기본 설정
 
@@ -195,13 +195,13 @@ function test(configFilePath = 'test_config.yml', lambdaPath = "/src/lambda/") {
         const mod = require(appRoot + lambdaPath + item.uri);
         const lambdaWrapper = jestPlugin.lambdaWrapper;
         const wrapped = lambdaWrapper.wrap(mod, { handler: 'handler' });
-        
-        const useAuthorizer = (mod.apiSpec.event&& mod.apiSpec.event[0]&& mod.apiSpec.event[0].authorizer)
+
+        const useAuthorizer = (mod.apiSpec.event && mod.apiSpec.event[0] && mod.apiSpec.event[0].authorizer)
 
         it(item.uri + ((item.description) ? " " + item.description : ""), async () => {
             let authorizer_result = testDirection.claimsProfiles ? testDirection.claimsProfiles[item.claimsProfile] : undefined
             const authorizer_token = getValue(item.token)
-            authorizer_result = authorizer &&  useAuthorizer ? await handleAuthorizer(authorizer, authorizer_token) : authorizer_result
+            authorizer_result = authorizer && useAuthorizer ? await handleAuthorizer(authorizer, authorizer_token) : authorizer_result
 
             let input = {
                 queryStringParameters: item.parms, body: JSON.stringify(item.parms),
@@ -215,7 +215,8 @@ function test(configFilePath = 'test_config.yml', lambdaPath = "/src/lambda/") {
                         // item.header에 jwt가 설정되어있어야함
                         lambda: authorizer_result
                     }
-                }
+                },
+                ...item
             }
 
             if (item.parms) {
