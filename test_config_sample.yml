@@ -9,26 +9,26 @@ claimsProfiles:
     test1: tt1
     test2: tt2
 test_targets:
-- uri: ddb/put.js
-  eventType: http
-  description: testDDB
-  method: put
-  parms:
-    email: spark@rubywave.io
-    company_name: rubywave
-    type: test
-  expect:
-    checkType: check_200
-- uri: ddb/get.js
-  description: testDDB
-  eventType: http
-  method: get
-  claimsProfile: test1
-  parms:
-    hash_key: hash_test
-  expect:
-    checkType: check_value
-    target:
-      data:
-        t1: 1
-        t2: 2
+  - uri: ddb/put.js
+    eventType: http
+    description: testDDB
+    method: put
+    parms:
+      email: spark@rubywave.io
+      company_name: rubywave
+      type: test
+    expect:
+      checkType: check_200
+  - uri: ddb/get.js
+    description: testDDB
+    eventType: http
+    method: get
+    claimsProfile: test1
+    parms:
+      hash_key: hash_test
+    expect:
+      checkType: check_value
+      target:
+        data:
+          t1: 1
+          t2: 2

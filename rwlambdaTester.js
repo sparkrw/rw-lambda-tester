@@ -3,7 +3,7 @@ const YAML = require('yaml')
 const fs = require('fs')
 const AWS = require('aws-sdk');
 var appRoot = require('app-root-path');
-const jestPlugin = require('serverless-jest-plugin');
+const lambdaWrapper = require('lambda-wrapper');
 
 const JSON5 = require('json5');
 const moment = require('moment');
@@ -193,10 +193,10 @@ function test(configFilePath = 'test_config.yml', lambdaPath = "/src/lambda/") {
         //queryStringParameters,body에 둘다 넣는다. 
         let eventType = item.eventType ? item.eventType : "http";
         const mod = require(appRoot + lambdaPath + item.uri);
-        const lambdaWrapper = jestPlugin.lambdaWrapper;
+
         const wrapped = lambdaWrapper.wrap(mod, { handler: 'handler' });
 
-        const useAuthorizer = (mod.apiSpec.event && mod.apiSpec.event[0] && mod.apiSpec.event[0].authorizer)
+        const useAuthorizer = (mod.apiSpec && mod.apiSpec.event && mod.apiSpec.event[0] && mod.apiSpec.event[0].authorizer)
 
         it(item.uri + ((item.description) ? " " + item.description : ""), async () => {
             let authorizer_result = testDirection.claimsProfiles ? testDirection.claimsProfiles[item.claimsProfile] : undefined
