@@ -246,7 +246,12 @@ function test(configFilePath = 'test_config.yml', lambdaPath = "/src/lambda/") {
                     }
                 }
             }
-
+            if (item.headers) {
+                input.headers = {};
+                for (var propert in item.headers) {
+                    input.headers[propert] = item.headers[propert];
+                }
+            }
 
 
             return wrapped.run(input).then(async (response) => {

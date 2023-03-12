@@ -12,7 +12,7 @@
     "type": "git",
     "url": "https://github.com/sparkrw/rw-lambda-tester.git"
   },
-  "version": "1.0.30",
+  "version": "1.0.31",
   "description": "Helper to test lambda",
   "main": "rwlambdaTester.js",
   "license": "MIT",
