@@ -95,3 +95,12 @@ test_targets:
     claimsProfile: test1
     expect:
       checkType: check_200
+  #header
+  - uri: exp.js
+    eventType: http
+    description: header
+    method: get
+    headers:
+      Authorization: test1234
+    expect:
+      checkType: check_200
